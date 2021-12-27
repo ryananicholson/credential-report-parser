@@ -21,7 +21,7 @@ def getSignatureKey(key, date_stamp, regionName, serviceName):
     kSigning = sign(kService, 'aws4_request')
     return kSigning
 
-def sendrequest(request_parameters):
+def sendrequest(request_parameters, SessionToken):
 
     method = 'POST'
     service = 'iam'
@@ -85,9 +85,15 @@ def sendrequest(request_parameters):
     # ************* TASK 4: ADD SIGNING INFORMATION TO THE REQUEST *************
     # Put the signature information in a header named Authorization.
     authorization_header = algorithm + ' ' + 'Credential=' + AccessKey + '/' + credential_scope + ', ' +  'SignedHeaders=' + signed_headers + ', ' + 'Signature=' + signature
-    headers = {'Content-Type':content_type,
-            'X-Amz-Date':amz_date,
-            'Authorization':authorization_header}
+    if SessionToken == "":
+        headers = {'Content-Type':content_type,
+                'X-Amz-Date':amz_date,
+                'Authorization':authorization_header}
+    else: 
+        headers = {'Content-Type':content_type,
+                'X-Amz-Date':amz_date,
+                'Authorization':authorization_header,
+                'X-Amz-Security-Token':SessionToken}
     try:
         r = requests.post(endpoint, data=request_parameters, headers=headers)
         return r.text
@@ -158,8 +164,8 @@ if AccessKey == None or SecretKey == None:
     print("\033[31mERROR:\033[0m Cannot retrieve AWS credentials. Use environment variables, .aws/credentials file, or IMDS to give this app access to AWS.")
     exit(1)
 
-sendrequest("Action=GenerateCredentialReport&Version=2010-05-08")
-report = sendrequest("Action=GetCredentialReport&Version=2010-05-08")
+sendrequest("Action=GenerateCredentialReport&Version=2010-05-08", SessionToken)
+report = sendrequest("Action=GetCredentialReport&Version=2010-05-08", SessionToken)
 for line in report.split("\n"):
     if "<Content>" in line:
         b64Content = line.split(">")[1].split("<")[0]
