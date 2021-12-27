@@ -3,6 +3,7 @@
 import requests
 import argparse
 import os
+import json
 
 parser = argparse.ArgumentParser()
 parser.add_argument("action", help="The action to perform against the credential report (password_change_dates, mfa_enabled, last_used)")
@@ -49,20 +50,22 @@ except:
     else:
         try:
             roleName = requests.get("http://169.254.169.254/latest/meta-data/iam/security-credentials").text
-            AccessKey = requests.get("http://169.254.169.254/latest/meta-data/iam/security-credentials/" + roleName)
+            resultJson = json.loads(requests.get("http://169.254.169.254/latest/meta-data/iam/security-credentials/" + roleName).text)
+            AccessKey = resultJson['AccessKeyId']
         except:
             print("\033[31mERROR:\033[0m Cannot retrieve AWS credentials. Use environment variables, .aws/credentials file, or IMDS to give this app access to AWS.")
             exit(1)
         try:
-            roleName = requests.get("http://169.254.169.254/latest/meta-data/iam/security-credentials").text
-            SecretKey = requests.get("http://169.254.169.254/latest/meta-data/iam/security-credentials/" + roleName)
+            SecretKey = resultJson['SecretAccessKey']
         except:
             print("\033[31mERROR:\033[0m Cannot retrieve AWS credentials. Use environment variables, .aws/credentials file, or IMDS to give this app access to AWS.")
             exit(1)
         try:
-            roleName = requests.get("http://169.254.169.254/latest/meta-data/iam/security-credentials").text
-            SessionToken = requests.get("http://169.254.169.254/latest/meta-data/iam/security-credentials/" + roleName)
+            SessionToken = resultJson['Token']
         except:
             print("\033[31mERROR:\033[0m Cannot retrieve AWS credentials. Use environment variables, .aws/credentials file, or IMDS to give this app access to AWS.")
             exit(1)
 print(AccessKey)
+print(SecretKey)
+if SessionToken != None:
+    print(SessionToken)
