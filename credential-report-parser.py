@@ -217,4 +217,8 @@ if args.action == "last_used":
         for line in reportDecoded.split("\n"):
             if not line.startswith("user,arn,user_creation") and not line.startswith("<"):
                 if not line.startswith("user,arn,user_creation"):
-                    print(line.split(",")[0] + "," + line.split(",")[4])
+                    if line.split(",")[4] == "N/A":
+                        logDate = line.split(",")[2]
+                    else:
+                        logDate = line.split(",")[4]
+                    print(line.split(",")[0] + "," + logDate)
