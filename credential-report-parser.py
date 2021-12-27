@@ -161,7 +161,7 @@ if AccessKey == None or SecretKey == None:
 sendrequest("Action=GenerateCredentialReport&Version=2010-05-08")
 report = sendrequest("Action=GetCredentialReport&Version=2010-05-08")
 for line in report.split("\n"):
-    if line.startswith("    <Content>"):
+    if "<Content>" in line:
         b64Content = line.split(">")[1].split("<")[0]
         reportDecoded = base64.b64decode(b64Content).decode('utf-8')
 if args.action == "mfa_enabled":
