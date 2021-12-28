@@ -118,7 +118,7 @@ if args.action == "mfa_enabled" and args.days != None:
 # Check for AWS credentials
 
 ## Environment variables
-
+SessionToken = ""
 try:
     AccessKey = os.environ['AWS_ACCESS_KEY_ID']
     SecretKey = os.environ['AWS_SECRET_ACCESS_KEY']
