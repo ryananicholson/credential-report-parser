@@ -63,3 +63,4 @@ Helps identify misconfigured or stale AWS IAM user accounts
     ```bash
     python3 ./credential-report-parser.py mfa_enabled
     ```
+    
